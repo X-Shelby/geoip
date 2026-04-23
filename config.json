@@ -10,15 +10,6 @@
       }
     },
     {
-      "type": "cutter",
-      "action": "remove",
-      "args": {
-        "wantedList": [
-          "cn"
-        ]
-      }
-    },
-    {
       "type": "text",
       "action": "add",
       "args": {
