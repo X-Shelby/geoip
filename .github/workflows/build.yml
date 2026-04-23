@@ -32,7 +32,6 @@ jobs:
       - name: Set variables
         run: |
           echo "TAG_NAME=latest" >> $GITHUB_ENV
-          # 增加 TZ=Asia/Shanghai 确保显示的是北京时间
           echo "RELEASE_NAME=Latest Update ($(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M'))" >> $GITHUB_ENV
         shell: bash
 
@@ -43,7 +42,6 @@ jobs:
           mkdir -p output
           curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-ASN-CSV.zip
           curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-Country-CSV.zip
-          # 仅下载必要的 CSV 即可，体积更小
 
       - name: Prepare GeoLite2 databases
         run: |
@@ -61,12 +59,10 @@ jobs:
       - name: Extract targets and clean output
         run: |
           cd output || exit 1
-          # 提取各种可能的路径
           cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
           cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
           cp text/cn_v4.txt ./cn_v4.txt 2>/dev/null || true
           cp text/cn_v6.txt ./cn_v6.txt 2>/dev/null || true
-          # 彻底清理：只留 cn_v4.txt 和 cn_v6.txt，不上传杂质
           find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
           find . -maxdepth 1 -type f ! -name 'cn_v4.txt' ! -name 'cn_v6.txt' -delete
 
@@ -86,15 +82,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd output || exit 1
-          # 强力清除旧的 Release 和 Tag 以固定链接
-          gh release delete ${{ env.TAG_NAME }} --yes || true
-          git push origin :refs/tags/${{ env.TAG_NAME }} || true
+          # 配置临时 git 用户信息以允许打标签
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
-          # 重新创建固定链接
-          gh release create ${{ env.TAG_NAME }} \
+          # 清除旧标签
+          git tag -d latest 2>/dev/null || true
+          git push origin :refs/tags/latest 2>/dev/null || true
+          gh release delete latest --yes 2>/dev/null || true
+          
+          # 新建标签并推送
+          git tag latest
+          git push origin latest
+          
+          # 发布 Release
+          gh release create latest \
             --title "${{ env.RELEASE_NAME }}" \
-            --notes "本文件自动生成，固定链接：https://github.com/${{ github.repository }}/releases/download/${{ env.TAG_NAME }}/cn_v4.txt" \
-            --target release \
+            --notes "固定链接：https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.txt" \
             ./cn_v4.txt ./cn_v6.txt
 
       - name: Purge jsdelivr CDN
