@@ -106,11 +106,17 @@ jobs:
             curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/${file}"
           done
 
-      - name: Remove some files to avoid publishing to GitHub release
+            - name: Extract TXT files and clean up
         run: |
           cd output || exit 1
+          cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
+          cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
+          cp text/cn_v4.txt ./cn_v4.txt 2>/dev/null || true
+          cp text/cn_v6.txt ./cn_v6.txt 2>/dev/null || true
           find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
           find . -maxdepth 1 -type f ! -name 'cn_v4.txt' ! -name 'cn_v6.txt' -delete
+          echo "准备上传的文件列表："
+          ls -la
 
       - name: Upload files to GitHub release
         env:
