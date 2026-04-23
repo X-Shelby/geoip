@@ -10,8 +10,10 @@ on:
       - ".gitignore"
       - "LICENSE*"
       - "*.md"
+
 permissions:
   contents: write
+
 jobs:
   build:
     name: Build
@@ -30,7 +32,8 @@ jobs:
       - name: Set variables
         run: |
           echo "TAG_NAME=latest" >> $GITHUB_ENV
-          echo "RELEASE_NAME=Latest Update ($(date +'%Y-%m-%d %H:%M'))" >> $GITHUB_ENV
+          # 增加 TZ=Asia/Shanghai 确保显示的是北京时间
+          echo "RELEASE_NAME=Latest Update ($(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M'))" >> $GITHUB_ENV
         shell: bash
 
       - name: Download GeoLite2 databases
@@ -38,24 +41,14 @@ jobs:
           LICENSE_KEY: ${{ secrets.MAXMIND_GEOLITE2_LICENSE }}
         run: |
           mkdir -p output
-          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN&license_key=${LICENSE_KEY}&suffix=tar.gz" -o ./output/GeoLite2-ASN.tar.gz
           curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-ASN-CSV.zip
-          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=${LICENSE_KEY}&suffix=tar.gz" -o ./output/GeoLite2-Country.tar.gz
           curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-Country-CSV.zip
+          # 仅下载必要的 CSV 即可，体积更小
 
       - name: Prepare GeoLite2 databases
         run: |
-          cp ./output/{*.gz,*.zip} ./
-          unzip GeoLite2-Country-CSV.zip
-          unzip GeoLite2-ASN-CSV.zip
-          tar -xvzf GeoLite2-Country.tar.gz
-          tar -xvzf GeoLite2-ASN.tar.gz
-
-          cp GeoLite2-Country_*/*.mmdb ./output/
-          cp GeoLite2-ASN_*/*.mmdb ./output/
-          cp GeoLite2-Country-CSV_*/{GeoLite2-Country-Blocks-*,GeoLite2-Country-Locations-en,GeoLite2-Country-Locations-zh-CN}.csv ./output/
-          cp GeoLite2-ASN-CSV_*/*.csv ./output/
-
+          unzip ./output/GeoLite2-Country-CSV.zip -d ./
+          unzip ./output/GeoLite2-ASN-CSV.zip -d ./
           mkdir -p geolite2
           cp GeoLite2-Country-CSV_*/*.csv ./geolite2/
           cp GeoLite2-ASN-CSV_*/*.csv ./geolite2/
@@ -65,35 +58,15 @@ jobs:
           go build ./
           ./geoip convert -c ./config.json
 
-      - name: Verify mmdb files
-        run: |
-          cd ./output || exit 1
-          go install -v github.com/maxmind/mmdbverify@latest
-          for name in $(ls *.mmdb); do
-            $(go env GOPATH)/bin/mmdbverify -file ${name}
-          done
-
-      - name: Generate sha256 checksum for dat files
-        run: |
-          cd ./output || exit 1
-          for name in $(ls *.dat); do
-            sha256sum ${name} > ./${name}.sha256sum
-          done
-
-      - name: Generate sha256 checksum for mmdb files
-        run: |
-          cd ./output || exit 1
-          for name in $(ls *.mmdb); do
-            sha256sum ${name} > ./${name}.sha256sum
-          done
-
-      - name: Remove some files to avoid publishing to GitHub release
+      - name: Extract targets and clean output
         run: |
           cd output || exit 1
+          # 提取各种可能的路径
           cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
           cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
           cp text/cn_v4.txt ./cn_v4.txt 2>/dev/null || true
           cp text/cn_v6.txt ./cn_v6.txt 2>/dev/null || true
+          # 彻底清理：只留 cn_v4.txt 和 cn_v6.txt，不上传杂质
           find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
           find . -maxdepth 1 -type f ! -name 'cn_v4.txt' ! -name 'cn_v6.txt' -delete
 
@@ -105,18 +78,26 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b release
           git add cn_v4.txt cn_v6.txt
-          git commit -m "Auto-update: $(date +'%Y-%m-%d %H:%M')"
+          git commit -m "Auto-update: ${{ env.RELEASE_NAME }}"
           git push -f "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" release
+
+      - name: Upload to GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd output || exit 1
+          # 强力清除旧的 Release 和 Tag 以固定链接
+          gh release delete ${{ env.TAG_NAME }} --yes || true
+          git push origin :refs/tags/${{ env.TAG_NAME }} || true
+          
+          # 重新创建固定链接
+          gh release create ${{ env.TAG_NAME }} \
+            --title "${{ env.RELEASE_NAME }}" \
+            --notes "本文件自动生成，固定链接：https://github.com/${{ github.repository }}/releases/download/${{ env.TAG_NAME }}/cn_v4.txt" \
+            --target release \
+            ./cn_v4.txt ./cn_v6.txt
 
       - name: Purge jsdelivr CDN
         run: |
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v4.txt"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.txt"
-
-      - name: Upload to GitHub Release (Optional)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd output || exit 1
-          gh release delete latest --yes || true
-          gh release create latest --title "Latest CN IP List" --notes "Updated on $(date)" ./*.txt
