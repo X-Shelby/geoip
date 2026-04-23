@@ -313,8 +313,21 @@
     },
     {
       "type": "text",
-      "action": "output"
+      "action": "output",
+      "args": {
+        "outputDir": "./output/text_v4",
+        "onlyIPType": "ipv4"
+       }
     },
+{
+  "type": "text",
+  "action": "output",
+  "args": {
+    "outputDir": "./output/text_v6",
+    "onlyIPType": "ipv6"
+  }
+},
+
     {
       "type": "text",
       "action": "output",
