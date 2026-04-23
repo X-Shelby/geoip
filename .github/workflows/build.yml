@@ -119,5 +119,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd output || exit 1
-          UPLOAD_FILES=$(find . -type f)
-          gh release create ${{ env.TAG_NAME }} --title "${{ env.RELEASE_NAME }}" $UPLOAD_FILES
+          gh release create ${{ env.TAG_NAME }} --title "${{ env.RELEASE_NAME }}" --notes "Auto-generated GeoIP files"
+          find . -type f \( -name "*.txt" -o -name "*.dat" -o -name "*.mmdb" -o -name "*.sha256sum" \) | while read -r file; do
+            echo "Uploading $file..."
+            gh release upload ${{ env.TAG_NAME }} "$file" --clobber
+            sleep 0.5
+          done
+
