@@ -117,5 +117,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd output || exit 1
-          gh release create ${{ env.TAG_NAME }} --title "${{ env.RELEASE_NAME }}" ./output/*.txt
+          gh release create ${{ env.TAG_NAME }} --title "${{ env.RELEASE_NAME }}" ./*.txt
 
