@@ -98,8 +98,11 @@ jobs:
           # 发布 Release
           gh release create latest \
             --title "${{ env.RELEASE_NAME }}" \
-            --notes "固定链接：https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.txt" \
+            --notes "固定链接：
+              IPv4: https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.txt
+              IPv6: https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.txt" \
             ./cn_v4.txt ./cn_v6.txt
+
 
       - name: Purge jsdelivr CDN
         run: |
