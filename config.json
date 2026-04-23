@@ -13,7 +13,9 @@
       "type": "cutter",
       "action": "remove",
       "args": {
-        "wantedList": ["cn"]
+        "wantedList": [
+          "cn"
+        ]
       }
     },
     {
@@ -81,7 +83,10 @@
       "args": {
         "name": "google",
         "uri": "https://www.gstatic.com/ipranges/goog.json",
-        "jsonPath": ["prefixes.#.ipv4Prefix", "prefixes.#.ipv6Prefix"]
+        "jsonPath": [
+          "prefixes.#.ipv4Prefix",
+          "prefixes.#.ipv6Prefix"
+        ]
       }
     },
     {
@@ -90,7 +95,10 @@
       "args": {
         "name": "google",
         "uri": "https://www.gstatic.com/ipranges/cloud.json",
-        "jsonPath": ["prefixes.#.ipv4Prefix", "prefixes.#.ipv6Prefix"]
+        "jsonPath": [
+          "prefixes.#.ipv4Prefix",
+          "prefixes.#.ipv6Prefix"
+        ]
       }
     },
     {
@@ -99,7 +107,10 @@
       "args": {
         "name": "fastly",
         "uri": "https://api.fastly.com/public-ip-list",
-        "jsonPath": ["addresses", "ipv6_addresses"]
+        "jsonPath": [
+          "addresses",
+          "ipv6_addresses"
+        ]
       }
     },
     {
@@ -133,8 +144,15 @@
             "AS13335",
             "AS132892"
           ],
-          "facebook": ["AS63293", "AS54115", "AS32934"],
-          "fastly": ["AS54113", "AS394192"],
+          "facebook": [
+            "AS63293",
+            "AS54115",
+            "AS32934"
+          ],
+          "fastly": [
+            "AS54113",
+            "AS394192"
+          ],
           "google": [
             "AS6432",
             "AS55023",
@@ -167,9 +185,26 @@
             "AS139190",
             "AS139070"
           ],
-          "netflix": ["AS55095", "AS40027", "AS394406", "AS2906"],
-          "telegram": ["AS62041", "AS62014", "AS59930", "AS44907", "AS211157"],
-          "twitter": ["AS8945", "AS63179", "AS54888", "AS35995", "AS13414"]
+          "netflix": [
+            "AS55095",
+            "AS40027",
+            "AS394406",
+            "AS2906"
+          ],
+          "telegram": [
+            "AS62041",
+            "AS62014",
+            "AS59930",
+            "AS44907",
+            "AS211157"
+          ],
+          "twitter": [
+            "AS8945",
+            "AS63179",
+            "AS54888",
+            "AS35995",
+            "AS13414"
+          ]
         }
       }
     },
@@ -184,18 +219,22 @@
       "action": "output",
       "args": {
         "outputDir": "./output/text_v4",
-        "onlyIPType": "ipv4"
-        "wantedList": ["cn"]
-       }
+        "onlyIPType": "ipv4",
+        "wantedList": [
+          "cn"
+        ]
+      }
     },
-{
-  "type": "text",
-  "action": "output",
-  "args": {
-    "outputDir": "./output/text_v6",
-    "onlyIPType": "ipv6",
-    "wantedList": ["cn"]
-  }
-}
+    {
+      "type": "text",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/text_v6",
+        "onlyIPType": "ipv6",
+        "wantedList": [
+          "cn"
+        ]
+      }
+    }
   ]
 }
