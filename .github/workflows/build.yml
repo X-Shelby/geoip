@@ -65,7 +65,7 @@ jobs:
           go build ./
           ./geoip convert -c ./config.json
 
-      - name: Verify mmdb files
+     - name: Verify mmdb files
         run: |
           cd ./output || exit 1
           go install -v github.com/maxmind/mmdbverify@latest
@@ -106,8 +106,8 @@ jobs:
             curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/${file}"
           done
 
-            - name: Extract TXT files and clean up
-        run: |
+      - name: Extract TXT files and clean up
+          run: |
           cd output || exit 1
           cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
           cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
