@@ -65,7 +65,7 @@ jobs:
           go build ./
           ./geoip convert -c ./config.json
 
-     - name: Verify mmdb files
+      - name: Verify mmdb files
         run: |
           cd ./output || exit 1
           go install -v github.com/maxmind/mmdbverify@latest
@@ -106,8 +106,8 @@ jobs:
             curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/${file}"
           done
 
-      - name: Extract TXT files and clean up
-          run: |
+      - name: Remove some files to avoid publishing to GitHub release
+        run: |
           cd output || exit 1
           cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
           cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
@@ -115,8 +115,6 @@ jobs:
           cp text/cn_v6.txt ./cn_v6.txt 2>/dev/null || true
           find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
           find . -maxdepth 1 -type f ! -name 'cn_v4.txt' ! -name 'cn_v6.txt' -delete
-          echo "准备上传的文件列表："
-          ls -la
 
       - name: Upload files to GitHub release
         env:
@@ -124,4 +122,3 @@ jobs:
         run: |
           cd output || exit 1
           gh release create ${{ env.TAG_NAME }} --title "${{ env.RELEASE_NAME }}" ./*.txt
-
