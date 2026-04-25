@@ -40,16 +40,27 @@ jobs:
           LICENSE_KEY: ${{ secrets.MAXMIND_GEOLITE2_LICENSE }}
         run: |
           mkdir -p output
+          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN&license_key=${LICENSE_KEY}&suffix=tar.gz" -o ./output/GeoLite2-ASN.tar.gz
           curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-ASN-CSV.zip
+          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=${LICENSE_KEY}&suffix=tar.gz" -o ./output/GeoLite2-Country.tar.gz
           curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-Country-CSV.zip
 
       - name: Prepare GeoLite2 databases
         run: |
-          unzip ./output/GeoLite2-Country-CSV.zip -d ./
-          unzip ./output/GeoLite2-ASN-CSV.zip -d ./
+          cp ./output/{*.gz,*.zip} ./
+          unzip GeoLite2-Country-CSV.zip
+          unzip GeoLite2-ASN-CSV.zip
+          tar -xvzf GeoLite2-Country.tar.gz
+          tar -xvzf GeoLite2-ASN.tar.gz
+
+          # 恢复拷贝 mmdb 文件的步骤，这是补全 IP 数量的关键
+          cp GeoLite2-Country_*/*.mmdb ./output/
+          cp GeoLite2-ASN_*/*.mmdb ./output/
+
           mkdir -p geolite2
           cp GeoLite2-Country-CSV_*/*.csv ./geolite2/
           cp GeoLite2-ASN-CSV_*/*.csv ./geolite2/
+
 
       - name: Build geoip files
         run: |
