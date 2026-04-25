@@ -56,22 +56,33 @@ jobs:
           go build ./
           ./geoip convert -c ./config.json
 
-      - name: Extract targets and clean output
+      - name: Install sing-box
+        run: |
+          set -e
+          SB_VERSION=$(curl -s "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
+          curl -Lo sing-box.tar.gz "https://github.com/SagerNet/sing-box/releases/download/v${SB_VERSION}/sing-box-${SB_VERSION}-linux-amd64.tar.gz"
+          tar -xzf sing-box.tar.gz
+          cp sing-box-*/sing-box ./sing-box
+          chmod +x ./sing-box
+
+      - name: Extract and Compile
         run: |
           cd output || exit 1
-          # 提取原本的 v4/v6 分离文件
-          cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
-          cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
+          # 1. 提取基础文件
+          cp text_v4/cn.txt ./cn_v4.txt
+          cp text_v6/cn.txt ./cn_v6.txt
+          cp text_all/cn.txt ./cn.txt
           
-          # 提取新增的合并文件 (txt, srs, mrs)
-          cp text_all/cn.txt ./cn.txt 2>/dev/null || true
-          cp srs/cn.srs ./cn.srs 2>/dev/null || true
-          cp mrs/cn.mrs ./cn.mrs 2>/dev/null || true
+          # 2. 编译 sing-box 二进制规则集 (srs)
+          # 先构造符合 sing-box 格式的 JSON
+          echo '{"version":1,"rules":[{"ip_cidr":[' > temp_srs.json
+          sed 's/.*/"&"/' cn.txt | paste -sd, - >> temp_srs.json
+          echo ']}]}' >> temp_srs.json
+          ../sing-box rule-set compile temp_srs.json -o cn.srs
           
-          # 清理所有中间文件夹
-          find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
-          # 仅保留我们需要发布的文件
-          find . -maxdepth 1 -type f ! -name 'cn*' -delete
+          # 3. 清理中间文件
+          rm -rf text_v4 text_v6 text_all temp_srs.json
+
 
       - name: Push to release branch (Fixed Link)
         run: |
