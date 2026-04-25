@@ -278,5 +278,29 @@
          ]
       }
     }
+        {
+      "type": "text", // 纯文本 CIDR 格式 (v4 + v6 合并)
+      "action": "output",
+      "args": {
+        "outputDir": "./output/text_all",
+        "wantedList": ["cn"] 
+      }
+    },
+    {
+      "type": "sing-box", // sing-box 二进制规则集 (.srs)
+      "action": "output",
+      "args": {
+        "outputDir": "./output/srs",
+        "wantedList": ["cn"]
+      }
+    },
+    {
+      "type": "clash-meta", // Mihomo (Clash Meta) 二进制规则集 (.mrs)
+      "action": "output",
+      "args": {
+        "outputDir": "./output/mrs",
+        "wantedList": ["cn"]
+      }
+    }
   ]
 }
