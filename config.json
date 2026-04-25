@@ -217,7 +217,12 @@
       "action": "output",
       "args": {
         "outputDir": "./output/text_v4",
-        "onlyIPType": "ipv4"
+        "onlyIPType": "ipv4",
+        "wantedList": [
+          "cn",
+          "china",
+          "private"
+       ]
       }
     },
     {
@@ -225,7 +230,12 @@
       "action": "output",
       "args": {
         "outputDir": "./output/text_v6",
-        "onlyIPType": "ipv6"
+        "onlyIPType": "ipv6",
+         "wantedList": [
+          "cn",
+          "china",
+          "private"
+         ]
       }
     }
   ]
