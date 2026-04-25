@@ -1,6 +1,6 @@
 # GeoIP 简介 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Loyalsoldier/geoip) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Loyalsoldier/geoip/total?logo=github) ![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/Loyalsoldier/geoip/latest/total?logo=github) [![jsdelivr stats](https://data.jsdelivr.com/v1/package/gh/Loyalsoldier/geoip/badge?style=rounded)](https://www.jsdelivr.com/package/gh/Loyalsoldier/geoip)
 
-本fork项目每日凌晨自动生成多种格式 GeoIP 文件，同时提供命令行界面（CLI）工具供用户自行定制 GeoIP 文件，包括sing-box `SRS` 格式文件、mihomo `MRS` 、TXT格式文件。
+本fork自用项目，主要用于Box4Magisk、Box for Root等代理模块的ipset功能提供cn_ip文件。每日凌晨自动生成多种格式 GeoIP 文件，同时提供命令行界面（CLI）工具供用户自行定制 GeoIP 文件，包括sing-box `SRS` 格式文件、mihomo `MRS` 、TXT格式文件。
 
 ## 与 MaxMind 官方 GeoIP 数据的区别
 
@@ -10,119 +10,21 @@
 
 - 中国大陆 IPv4 地址数据融合了 [IPIP.net](https://github.com/17mon/china_ip_list/blob/master/china_ip_list.txt) 和 [@gaoyifan/china-operator-ip](https://github.com/gaoyifan/china-operator-ip/blob/ip-lists/china.txt)
 - 中国大陆 IPv6 地址数据使用 [@gaoyifan/china-operator-ip](https://github.com/gaoyifan/china-operator-ip/blob/ip-lists/china6.txt)
-- 新增类别（方便有特殊需求的用户使用）：
-  - `geoip:cloudflare`（`GEOIP,CLOUDFLARE`）
-  - `geoip:cloudfront`（`GEOIP,CLOUDFRONT`）
-  - `geoip:facebook`（`GEOIP,FACEBOOK`）
-  - `geoip:fastly`（`GEOIP,FASTLY`）
-  - `geoip:google`（`GEOIP,GOOGLE`）
-  - `geoip:netflix`（`GEOIP,NETFLIX`）
-  - `geoip:telegram`（`GEOIP,TELEGRAM`）
-  - `geoip:twitter`（`GEOIP,TWITTER`）
-  - `geoip:tor`（`GEOIP,TOR`）
+-
 
 ## 下载地址与使用方法
 
-本项目发布的所有 GeoIP 文件，请查看 [release 分支](https://github.com/Loyalsoldier/geoip/tree/release)。以下是部分格式 GeoIP 文件的下载地址：
+本项目发布的所有 GeoIP 文件，请查看 [release](https://github.com/X-Shelby/geoip/releases/tag/latest)。以下是部分格式GeoIP 文件的下载地址：
 
+固定下载链接：
+- IPv4 (TXT): https://github.com/X-Shelby/geoip/releases/download/latest/cn_v4.txt
+- IPv6 (TXT): https://github.com/X-Shelby/geoip/releases/download/latest/cn_v6.txt
+- 合并 (TXT): https://github.com/X-Shelby/geoip/releases/download/latest/cn.txt
+- sing-box (SRS): https://github.com/X-Shelby/geoip/releases/download/latest/cn.srs
+- Mihomo (MRS): https://github.com/X-Shelby/geoip/releases/download/latest/cn.mrs
 > 如果无法访问域名 `raw.githubusercontent.com`，可以使用第二个地址 `cdn.jsdelivr.net`。
 > 如果无法访问域名 `cdn.jsdelivr.net`，可以将其替换为 `fastly.jsdelivr.net`。
->
-> *.sha256sum 为校验文件。
-
-MaxMind 官方版 **ASN** 类型 mmdb 文件：
-
-
-
-
-
-
-
-### sing-box SRS 格式文件
-
-> 适用于 [sing-box](https://github.com/SagerNet/sing-box)。
-
-请查看本项目 `release` 分支下的 [srs 目录](https://github.com/Loyalsoldier/geoip/tree/release/srs)。
-
-#### SRS 格式文件使用方法
-
-<details>
-  <summary>点击查看在 <b>sing-box</b> 中的使用方法</summary>
-
-```json
-"route": {
-  "rules": [
-    {
-      "rule_set": "geoip-cn",
-      "outbound": "direct"
-    },
-    {
-      "rule_set": "geoip-us",
-      "outbound": "block"
-    }
-  ],
-  "rule_set": [
-    {
-      "tag": "geoip-cn",
-      "type": "remote",
-      "format": "binary",
-      "url": "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/srs/cn.srs"
-    },
-    {
-      "tag": "geoip-us",
-      "type": "remote",
-      "format": "binary",
-      "url": "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/srs/us.srs"
-    }
-  ]
-}
-```
-</details>
-
----
-
-### mihomo MRS 格式文件
-
-> 适用于 [mihomo](https://github.com/MetaCubeX/mihomo/tree/Meta)。
-
-请查看本项目 `release` 分支下的 [mrs 目录](https://github.com/Loyalsoldier/geoip/tree/release/mrs)。
-
-#### MRS 格式文件使用方法
-
-<details>
-  <summary>点击查看在 <b>mihomo</b> 中的使用方法</summary>
-
-```yaml
-rule-providers:
-  cn-cidr:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/mrs/cn.mrs"
-    path: ./mrs/geoip/cn.mrs
-    interval: 86400
-
-  google-cidr:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/mrs/google.mrs"
-    path: ./mrs/geoip/google.mrs
-    interval: 86400
-
-rules:
-  - RULE-SET,cn-cidr,DIRECT
-  - RULE-SET,google-cidr,PROXY,no-resolve
-```
-</details>
-
----
-
-### 纯文本 txt 格式文件
-
-请查看本项目 `release` 分支下的 [text 目录](https://github.com/Loyalsoldier/geoip/tree/release/text)。
-
----
+>。
 
 ## 自行定制 GeoIP 文件
 
@@ -433,12 +335,6 @@ false
 
 >> exit
 ```
-
-## 使用本项目的项目
-
-- [@Loyalsoldier/v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat)
-- [@Loyalsoldier/clash-rules](https://github.com/Loyalsoldier/clash-rules)
-- [@Loyalsoldier/surge-rules](https://github.com/Loyalsoldier/surge-rules)
 
 ## License
 
