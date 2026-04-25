@@ -56,31 +56,21 @@ jobs:
           go build ./
           ./geoip convert -c ./config.json
 
-      - name: Install sing-box
-        run: |
-          set -e
-          SB_VERSION=$(curl -s "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
-          curl -Lo sing-box.tar.gz "https://github.com/SagerNet/sing-box/releases/download/v${SB_VERSION}/sing-box-${SB_VERSION}-linux-amd64.tar.gz"
-          tar -xzf sing-box.tar.gz
-          cp sing-box-*/sing-box ./sing-box
-          chmod +x ./sing-box
-
-      - name: Extract and Compile
+      - name: Extract targets and clean output
         run: |
           cd output || exit 1
-          # 1. 提取基础文件
-          cp text_v4/cn.txt ./cn_v4.txt
-          cp text_v6/cn.txt ./cn_v6.txt
-          cp text_all/cn.txt ./cn.txt
+          # 1. 从各自的子目录提取成品文件到根目录
+          cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
+          cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
+          cp text_all/cn.txt ./cn.txt 2>/dev/null || true
+          cp srs/cn.srs ./cn.srs 2>/dev/null || true
+          cp mrs/cn.mrs ./cn.mrs 2>/dev/null || true
           
-          # 2. 编译 sing-box 二进制规则集 (srs)
-          echo '{"version":1,"rules":[{"ip_cidr":[' > temp_srs.json
-          sed 's/.*/"&"/' cn.txt | paste -sd, - >> temp_srs.json
-          echo ']}]}' >> temp_srs.json
-          ../sing-box rule-set compile temp_srs.json -o cn.srs
-          
-          # 3. 清理中间文件
-          rm -rf text_v4 text_v6 text_all temp_srs.json
+          # 2. 彻底清理不需要的中间文件夹和临时文件
+          # 这样 release 分支里就只有干净的 5 个文件
+          find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
+          # 排除我们要保留的文件，其余删除
+          find . -maxdepth 1 -type f ! -name 'cn*' -delete
 
       - name: Push to release branch (Fixed Link)
         run: |
@@ -89,102 +79,6 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b release
-          # 删除了 cn.mrs
-          git add cn_v4.txt cn_v6.txt cn.txt cn.srs
-          git commit -m "Auto-update: ${{ env.RELEASE_NAME }}"
-          git push -f "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" release
-
-      - name: Upload to GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd output || exit 1
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
-          
-          git tag -d latest 2>/dev/null || true
-          git push origin :refs/tags/latest 2>/dev/null || true
-          gh release delete latest --yes 2>/dev/null || true
-          
-          git tag latest
-          git push origin latest
-          
-          # 删除了 cn.mrs
-          gh release create latest \
-            --title "${{ env.RELEASE_NAME }}" \
-            --notes "固定下载链接：
-              - IPv4 (TXT): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.txt
-              - IPv6 (TXT): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.txt
-              - 合并 (TXT): https://github.com/${{ github.repository }}/releases/download/latest/cn.txt
-              - sing-box (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.srs" \
-            ./cn_v4.txt ./cn_v6.txt ./cn.txt ./cn.srs
-
-      - name: Purge jsdelivr CDN
-        run: |
-          # 删除了 cn.mrs
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v4.txt"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.txt"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.txt"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.srs"
-
-      - name: Download GeoLite2 databases
-        env:
-          LICENSE_KEY: ${{ secrets.MAXMIND_GEOLITE2_LICENSE }}
-        run: |
-          mkdir -p output
-          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-ASN-CSV.zip
-          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-Country-CSV.zip
-
-      - name: Prepare GeoLite2 databases
-        run: |
-          unzip ./output/GeoLite2-Country-CSV.zip -d ./
-          unzip ./output/GeoLite2-ASN-CSV.zip -d ./
-          mkdir -p geolite2
-          cp GeoLite2-Country-CSV_*/*.csv ./geolite2/
-          cp GeoLite2-ASN-CSV_*/*.csv ./geolite2/
-
-      - name: Build geoip files
-        run: |
-          go build ./
-          ./geoip convert -c ./config.json
-
-      - name: Install sing-box
-        run: |
-          set -e
-          SB_VERSION=$(curl -s "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
-          curl -Lo sing-box.tar.gz "https://github.com/SagerNet/sing-box/releases/download/v${SB_VERSION}/sing-box-${SB_VERSION}-linux-amd64.tar.gz"
-          tar -xzf sing-box.tar.gz
-          cp sing-box-*/sing-box ./sing-box
-          chmod +x ./sing-box
-
-      - name: Extract and Compile
-        run: |
-          cd output || exit 1
-          # 1. 提取基础文件
-          cp text_v4/cn.txt ./cn_v4.txt
-          cp text_v6/cn.txt ./cn_v6.txt
-          cp text_all/cn.txt ./cn.txt
-          
-          # 2. 编译 sing-box 二进制规则集 (srs)
-          # 先构造符合 sing-box 格式的 JSON
-          echo '{"version":1,"rules":[{"ip_cidr":[' > temp_srs.json
-          sed 's/.*/"&"/' cn.txt | paste -sd, - >> temp_srs.json
-          echo ']}]}' >> temp_srs.json
-          ../sing-box rule-set compile temp_srs.json -o cn.srs
-          
-          # 3. 清理中间文件
-          rm -rf text_v4 text_v6 text_all temp_srs.json
-
-
-      - name: Push to release branch (Fixed Link)
-        run: |
-          cd output || exit 1
-          git init
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b release
-          # 添加所有 cn 相关文件
           git add cn_v4.txt cn_v6.txt cn.txt cn.srs cn.mrs
           git commit -m "Auto-update: ${{ env.RELEASE_NAME }}"
           git push -f "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" release
