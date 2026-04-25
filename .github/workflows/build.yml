@@ -2,7 +2,7 @@ name: Build geoip files
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 */2 * *"
+    - cron: "0 0 * * *"
   push:
     branches:
       - master
@@ -59,12 +59,19 @@ jobs:
       - name: Extract targets and clean output
         run: |
           cd output || exit 1
+          # 提取原本的 v4/v6 分离文件
           cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
           cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
-          cp text/cn_v4.txt ./cn_v4.txt 2>/dev/null || true
-          cp text/cn_v6.txt ./cn_v6.txt 2>/dev/null || true
+          
+          # 提取新增的合并文件 (txt, srs, mrs)
+          cp text_all/cn.txt ./cn.txt 2>/dev/null || true
+          cp srs/cn.srs ./cn.srs 2>/dev/null || true
+          cp mrs/cn.mrs ./cn.mrs 2>/dev/null || true
+          
+          # 清理所有中间文件夹
           find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
-          find . -maxdepth 1 -type f ! -name 'cn_v4.txt' ! -name 'cn_v6.txt' -delete
+          # 仅保留我们需要发布的文件
+          find . -maxdepth 1 -type f ! -name 'cn*' -delete
 
       - name: Push to release branch (Fixed Link)
         run: |
@@ -73,7 +80,8 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b release
-          git add cn_v4.txt cn_v6.txt
+          # 添加所有 cn 相关文件
+          git add cn_v4.txt cn_v6.txt cn.txt cn.srs cn.mrs
           git commit -m "Auto-update: ${{ env.RELEASE_NAME }}"
           git push -f "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" release
 
@@ -82,29 +90,33 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd output || exit 1
-          # 配置临时 git 用户信息以允许打标签
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
-          # 清除旧标签
+          
           git tag -d latest 2>/dev/null || true
           git push origin :refs/tags/latest 2>/dev/null || true
           gh release delete latest --yes 2>/dev/null || true
           
-          # 新建标签并推送
           git tag latest
           git push origin latest
           
-          # 发布 Release
+          # 发布 Release 并包含所有新格式文件
           gh release create latest \
             --title "${{ env.RELEASE_NAME }}" \
-            --notes "固定链接：
-              IPv4: https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.txt
-              IPv6: https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.txt" \
-            ./cn_v4.txt ./cn_v6.txt
-
+            --notes "固定下载链接：
+              - IPv4 (TXT): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.txt
+              - IPv6 (TXT): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.txt
+              - 合并 (TXT): https://github.com/${{ github.repository }}/releases/download/latest/cn.txt
+              - sing-box (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.srs
+              - Mihomo (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.mrs" \
+            ./cn_v4.txt ./cn_v6.txt ./cn.txt ./cn.srs ./cn.mrs
 
       - name: Purge jsdelivr CDN
         run: |
+          # 刷新所有新文件的 CDN 缓存
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v4.txt"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.txt"
+          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.txt"
+          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.srs"
+          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.mrs"
