@@ -36,72 +36,7 @@ MaxMind 官方版 **ASN** 类型 mmdb 文件：
 
 
 
-#### mmdb 格式文件使用方法
 
-<details>
-  <summary>点击查看在 <b>Clash</b> 中的使用方法</summary>
-  <br/>
-  <p>需要先下载 <code>.mmdb</code> 格式文件，命名为 <code>Country.mmdb</code>，并放置在 Clash 程序目录内。</p>
-
-```yaml
-rules:
-  - GEOIP,PRIVATE,policy,no-resolve
-  - GEOIP,FACEBOOK,policy
-  - GEOIP,CN,policy,no-resolve
-```
-</details>
-
-<details>
-  <summary>点击查看在 <b>mihomo</b> 中的使用方法</summary>
-
-```yaml
-geodata-mode: false
-geox-url:
-  mmdb: "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/Country.mmdb"
-  asn: "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/GeoLite2-ASN.mmdb"
-```
-</details>
-
-<details>
-  <summary>点击查看在 <b>Shadowrocket</b> 中的使用方法</summary>
-  <br/>
-  <p>需要将下载地址填入到 Shadowrocket 的设置中。</p>
-
-```conf
-[Rule]
-GEOIP,PRIVATE,DIRECT
-GEOIP,FACEBOOK,PROXY
-GEOIP,CN,DIRECT
-```
-</details>
-
-<details>
-  <summary>点击查看在 <b>Quantumult X</b> 中的使用方法</summary>
-  <br/>
-  <p>需要将下载地址填入到 Quantumult X 的设置中。</p>
-
-```conf
-[filter_local]
-GEOIP,PRIVATE,DIRECT
-GEOIP,FACEBOOK,PROXY
-GEOIP,CN,DIRECT
-```
-</details>
-
-<details>
-  <summary>点击查看在 <b>Surge</b> 中的使用方法</summary>
-  <br/>
-  <p>需要将下载地址填入到 Surge 的设置中。</p>
-
-```conf
-[Rule]
-GEOIP,PRIVATE,policy,no-resolve
-GEOIP,FACEBOOK,policy
-GEOIP,CN,policy,no-resolve
-```
-</details>
-
----
 
 ### sing-box SRS 格式文件
 
@@ -183,73 +118,9 @@ rules:
 
 ---
 
-### Clash ruleset 文件
-
-> 适用于 [Clash Premium](https://github.com/Dreamacro/clash)、[mihomo](https://github.com/MetaCubeX/mihomo/tree/Meta)。
-
-请查看本项目 `release` 分支下的 [clash 目录](https://github.com/Loyalsoldier/geoip/tree/release/clash)。
-
-#### Clash ruleset 使用方法
-
-<details>
-  <summary>点击查看在 <b>Clash Premium</b> 和 <b>mihomo</b> 中的使用方法</summary>
-
-```yaml
-rule-providers:
-  cn-cidr:
-    type: http
-    behavior: ipcidr
-    format: yaml
-    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/clash/ipcidr/cn.txt"
-    path: ./ruleset/ipcidr/cn.yaml
-    interval: 86400
-
-  telegram-cidr:
-    type: http
-    behavior: ipcidr
-    format: yaml
-    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/clash/ipcidr/telegram.txt"
-    path: ./ruleset/ipcidr/telegram.yaml
-    interval: 86400
-
-rules:
-  - RULE-SET,cn-cidr,DIRECT
-  - RULE-SET,telegram-cidr,PROXY,no-resolve
-```
-</details>
-
----
-
-### Surge ruleset 文件
-
-> 适用于 [Surge](https://nssurge.com)。
-
-请查看本项目 `release` 分支下的 [surge 目录](https://github.com/Loyalsoldier/geoip/tree/release/surge)。
-
-#### Surge ruleset 使用方法
-
-<details>
-  <summary>点击查看在 <b>Surge</b> 中的使用方法</summary>
-
-```conf
-[Rule]
-RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/surge/us.txt,REJECT
-RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/surge/cn.txt,DIRECT
-RULE-SET,https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/surge/telegram.txt,PROXY,no-resolve
-```
-</details>
-
----
-
 ### 纯文本 txt 格式文件
 
 请查看本项目 `release` 分支下的 [text 目录](https://github.com/Loyalsoldier/geoip/tree/release/text)。
-
----
-
-### Nginx `allow` 和 `deny` 文件
-
-请查看本项目 `release` 分支下的 [nginx 目录](https://github.com/Loyalsoldier/geoip/tree/release/nginx)。
 
 ---
 
@@ -332,65 +203,6 @@ CLI 提供的功能如下：
 - 去重和合并 IP 与 CIDR（`merge`）
 
 ### 总览
-
-```bash
-$ ./geoip
-geoip is a convenient tool to merge, convert and lookup IP & CIDR from various formats of geoip data.
-
-Usage:
-  geoip [command]
-
-Available Commands:
-  convert     Convert geoip data from one format to another by using config file
-  help        Help about any command
-  list        List all available input and output formats
-  lookup      Lookup specified IP or CIDR in specified lists
-  merge       Merge plaintext IP & CIDR from standard input, then print to standard output
-
-Flags:
-  -h, --help   help for geoip
-
-Use "geoip [command] --help" for more information about a command.
-```
-
-### 列出支持的 `input` 和 `output` 格式（`list`）
-
-```bash
-$ ./geoip list
-All available input formats:
-  - clashRuleSet (Convert ipcidr type of Clash RuleSet to other formats)
-  - clashRuleSetClassical (Convert classical type of Clash RuleSet to other formats (just processing IP & CIDR lines))
-  - cutter (Remove data from previous steps)
-  - dbipCountryMMDB (Convert DB-IP country mmdb database to other formats)
-  - ipinfoCountryMMDB (Convert IPInfo country mmdb database to other formats)
-  - json (Convert JSON data to other formats)
-  - maxmindGeoLite2ASNCSV (Convert MaxMind GeoLite2 ASN CSV data to other formats)
-  - maxmindGeoLite2CountryCSV (Convert MaxMind GeoLite2 country CSV data to other formats)
-  - maxmindMMDB (Convert MaxMind mmdb database to other formats)
-  - mihomoMRS (Convert mihomo MRS data to other formats)
-  - private (Convert LAN and private network CIDR to other formats)
-  - singboxSRS (Convert sing-box SRS data to other formats)
-  - stdin (Accept plaintext IP & CIDR from standard input, separated by newline)
-  - surgeRuleSet (Convert Surge RuleSet to other formats (just processing IP & CIDR lines))
-  - test (Convert specific CIDR to other formats (for test only))
-  - text (Convert plaintext IP & CIDR to other formats)
-  - v2rayGeoIPDat (Convert V2Ray GeoIP dat to other formats)
-
-All available output formats:
-  - clashRuleSet (Convert data to ipcidr type of Clash RuleSet)
-  - clashRuleSetClassical (Convert data to classical type of Clash RuleSet)
-  - dbipCountryMMDB (Convert data to DB-IP country mmdb database format)
-  - ipinfoCountryMMDB (Convert data to IPInfo country mmdb database format)
-  - lookup (Lookup specified IP or CIDR from various formats of data)
-  - maxmindMMDB (Convert data to MaxMind mmdb database format)
-  - mihomoMRS (Convert data to mihomo MRS format)
-  - singboxSRS (Convert data to sing-box SRS format)
-  - stdout (Convert data to plaintext CIDR format and output to standard output)
-  - surgeRuleSet (Convert data to Surge RuleSet)
-  - text (Convert data to plaintext CIDR format)
-  - v2rayGeoIPDat (Convert data to V2Ray GeoIP dat format)
-```
-
 ### 去重和合并 IP 与 CIDR（`merge`）
 
 ```bash
