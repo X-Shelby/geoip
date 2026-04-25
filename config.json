@@ -291,7 +291,7 @@
       }
     },
     {
-      "type": "sing-box", // sing-box 二进制规则集 (.srs)
+      "type": "sing-box",
       "action": "output",
       "args": {
         "outputDir": "./output/srs",
@@ -303,7 +303,7 @@
       }
     },
     {
-      "type": "clash-meta", // Mihomo (Clash Meta) 二进制规则集 (.mrs)
+      "type": "clash-meta",
       "action": "output",
       "args": {
         "outputDir": "./output/mrs",
