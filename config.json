@@ -217,11 +217,7 @@
       "action": "output",
       "args": {
         "outputDir": "./output/text_v4",
-        "onlyIPType": "ipv4",
-        "wantedList": [
-          "cn",
-          "private"
-        ]
+        "onlyIPType": "ipv4"
       }
     },
     {
@@ -229,11 +225,7 @@
       "action": "output",
       "args": {
         "outputDir": "./output/text_v6",
-        "onlyIPType": "ipv6",
-        "wantedList": [
-          "cn",
-          "private"
-        ]
+        "onlyIPType": "ipv6"
       }
     }
   ]
