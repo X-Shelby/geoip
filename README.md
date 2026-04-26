@@ -1,6 +1,6 @@
 # GeoIP 简介 [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/X-Shelby/geoip/total?logo=github)](https://github.com/X-Shelby/geoip) ![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/X-Shelby/geoip/latest/total?logo=github) [![jsdelivr stats](https://data.jsdelivr.com/v1/package/gh/X-Shelby/geoip/badge?style=rounded)](https://www.jsdelivr.com/package/gh/X-Shelby/geoip)
 
-# 本项目是 [Loyalsoldier/geoip](https://github.com/Loyalsoldier/geoip) 的修改版本。
+**本项目是 [Loyalsoldier/geoip](https://github.com/Loyalsoldier/geoip) 的修改版本。**
 
 ### 项目初衷
 主要针对 Box4Magisk、Box for Root 等代理模块的 ipset 功能，提供**区分 IPv4 与 IPv6** 的中国大陆 IP 列表（TXT 格式）。
