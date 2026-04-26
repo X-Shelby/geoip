@@ -69,6 +69,15 @@
       "action": "add",
       "args": {
         "name": "cn",
+        "uri": "https://raw.githubusercontent.com/mayaxcn/china-ip-list/master/chnroute.txt",
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "text",
+      "action": "add",
+      "args": {
+        "name": "cn",
         "mark": "阿里云",
         "uri": "https://metowolf.github.io/iplist/data/isp/aliyun.txt",
         "onlyIPType": "ipv4"
