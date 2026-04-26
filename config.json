@@ -21,6 +21,54 @@
       "action": "add",
       "args": {
         "name": "cn",
+        "mark": "苍狼山庄v4",
+        "uri": "https://ispip.clang.cn/all_cn.txt",
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "text",
+      "action": "add",
+      "args": {
+        "name": "cn",
+        "mark": "纯真IP",
+        "uri": "https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt",
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "text",
+      "action": "add",
+      "args": {
+        "name": "cn",
+        "uri": "https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt",
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "text",
+      "action": "add",
+      "args": {
+        "name": "cn",
+        "mark": "misakaio",
+        "uri": "https://raw.githubusercontent.com/misakaio/chnroutes2/refs/heads/master/chnroutes.txt",
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "text",
+      "action": "add",
+      "args": {
+        "name": "cn",
+        "uri": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt",
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "text",
+      "action": "add",
+      "args": {
+        "name": "cn",
         "mark": "阿里云",
         "uri": "https://metowolf.github.io/iplist/data/isp/aliyun.txt",
         "onlyIPType": "ipv4"
@@ -53,54 +101,6 @@
         "name": "cn",
         "mark": "华为云",
         "uri": "https://metowolf.github.io/iplist/data/isp/huawei.txt",
-        "onlyIPType": "ipv4"
-      }
-    },
-    {
-      "type": "text",
-      "action": "add",
-      "args": {
-        "name": "cn",
-        "mark": "苍狼山庄v4",
-        "uri": "https://ispip.clang.cn/all_cn.txt",
-        "onlyIPType": "ipv4"
-      }
-    },
-    {
-      "type": "text",
-      "action": "add",
-      "args": {
-        "name": "cn",
-        "mark": "纯真IP",
-        "uri": "https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt",
-        "onlyIPType": "ipv4"
-      }
-    },
-    {
-      "type": "text",
-      "action": "add",
-      "args": {
-        "name": "cn",
-        "mark": "misakaio",
-        "uri": "https://raw.githubusercontent.com/misakaio/chnroutes2/refs/heads/master/chnroutes.txt",
-        "onlyIPType": "ipv4"
-      }
-    },
-    {
-      "type": "text",
-      "action": "add",
-      "args": {
-        "name": "cn",
-        "uri": "https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt",
-        "onlyIPType": "ipv4"
-      }
-    },
-    {
-      "type": "text",
-      "action": "add",
-      "args": {
-        "name": "cn",
-        "uri": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china.txt",
         "onlyIPType": "ipv4"
       }
     },
