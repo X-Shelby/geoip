@@ -145,6 +145,15 @@
       "type": "text",
       "action": "add",
       "args": {
+        "name": "cn",
+        "uri": "https://raw.githubusercontent.com/mayaxcn/china-ip-list/refs/heads/master/chnroute_v6.txt",
+        "onlyIPType": "ipv6"
+      }
+    },
+    {
+      "type": "text",
+      "action": "add",
+      "args": {
         "name": "tor",
         "uri": "https://check.torproject.org/torbulkexitlist"
       }
