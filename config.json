@@ -21,6 +21,46 @@
       "action": "add",
       "args": {
         "name": "cn",
+        "mark": "阿里云",
+        "uri": "https://metowolf.github.io/iplist/data/isp/aliyun.txt",
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "text",
+      "action": "add",
+      "args": {
+        "name": "cn",
+        "mark": "腾讯云",
+        "uri": "https://metowolf.github.io/iplist/data/isp/tencent.txt",
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "text",
+      "action": "add",
+      "args": {
+        "name": "cn",
+        "mark": "字节跳动",
+        "uri": "https://metowolf.github.io/iplist/data/isp/bytedance.txt",
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "text",
+      "action": "add",
+      "args": {
+        "name": "cn",
+        "mark": "华为云",
+        "uri": "https://metowolf.github.io/iplist/data/isp/huawei.txt",
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "text",
+      "action": "add",
+      "args": {
+        "name": "cn",
         "mark": "苍狼山庄v4",
         "uri": "https://ispip.clang.cn/all_cn.txt",
         "onlyIPType": "ipv4"
