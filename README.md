@@ -8,7 +8,7 @@
 ### 核心特性
 * **自动更新**：每日凌晨自动生成 sing-box (`SRS`)、mihomo (`MRS`) 及 `TXT` 格式文件。
 * **数据增强**：在原项目基础上，额外整合了以下中国大陆（CN）数据源：
-[苍狼山庄](https://ispip.clang.cn/)、[纯真IP](https://github.com/metowolf/iplist)、[misakaio](https://github.com/misakaio/chnroutes2)
+ [苍狼山庄](https://ispip.clang.cn/)、[纯真IP](https://github.com/metowolf/iplist)、[misakaio](https://github.com/misakaio/chnroutes2)
 * **逻辑优化**：对所有数据源进行去重和合并（merge），确保生成的 CIDR 格式严谨、无重叠。
 
 ---
