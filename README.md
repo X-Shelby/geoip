@@ -1,4 +1,4 @@
-(https://deepwiki.com/badge.svg)](https://deepwiki.com/Loyalsoldier/geoip) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Loyalsoldier/geoip/total?logo=github) ![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/Loyalsoldier/geoip/latest/total?logo=github) [![jsdelivr stats](https://data.jsdelivr.com/v1/package/gh/Loyalsoldier/geoip/badge?style=rounded)](https://www.jsdelivr.com/package/gh/Loyalsoldier/geoip)
+(https://deepwiki.com/badge.svg)]# GeoIP 简介 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Loyalsoldier/geoip) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Loyalsoldier/geoip/total?logo=github) ![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/Loyalsoldier/geoip/latest/total?logo=github) [![jsdelivr stats](https://data.jsdelivr.com/v1/package/gh/Loyalsoldier/geoip/badge?style=rounded)](https://www.jsdelivr.com/package/gh/Loyalsoldier/geoip)
 
 
 本项目是 [Loyalsoldier/geoip](https://github.com/Loyalsoldier/geoip) 的修改版本。
