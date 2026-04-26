@@ -1,7 +1,10 @@
 # GeoIP 简介 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Loyalsoldier/geoip) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Loyalsoldier/geoip/total?logo=github) ![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/Loyalsoldier/geoip/latest/total?logo=github) [![jsdelivr stats](https://data.jsdelivr.com/v1/package/gh/Loyalsoldier/geoip/badge?style=rounded)](https://www.jsdelivr.com/package/gh/Loyalsoldier/geoip)
 
-本fork自用项目，主要用于Box4Magisk、Box for Root等代理模块的ipset功能提供cn_ip文件。每日凌晨自动生成多种格式 GeoIP 文件，同时提供命令行界面（CLI）工具供用户自行定制 GeoIP 文件，包括sing-box `SRS` 格式文件、mihomo `MRS` 、TXT格式文件。更详细内容请查看原作者Loyalsoldier的项目！
-此fork与Loyalsoldier的相比，增加了
+### 去重和合并 IP 与 CIDR（`merge`）
+根据提供的所有数据源，去重，将其转换为目标格式，并输出到文件。
+
+本项目为原项目的修改版，主要用于Box4Magisk、Box for Root等代理模块的ipset功能提供区分ipv4跟ipv6的cn_ip｀TXT`文件。每日凌晨自动生成包括sing-box `SRS` 、mihomo `MRS` 、TXT的格式文件。更详细内容请查看原作者[Loyalsoldier](https://github.com/Loyalsoldier/geoip)的项目！
+此fork与原项目的相比，增加了
 - 中国大陆（CN）IPv4、IPv6地址 [苍狼山庄](https://ispip.clang.cn/)、[纯真IP](https://github.com/metowolf/iplist)、[misakaio](https://github.com/misakaio/chnroutes2/blob/master/chnroutes.txt) 的数据源
 ## 与 MaxMind 官方 GeoIP 数据的区别
 
@@ -27,16 +30,8 @@
 > 如果无法访问域名 `cdn.jsdelivr.net`，可以将其替换为 `fastly.jsdelivr.net`。
 >。
 
-根据提供的所有数据源，去重，将其转换为目标格式，并输出到文件。
-
-### 去重和合并 IP 与 CIDR（`merge`）
-
 ## License
 
 [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/) and [GPL-3.0](https://github.com/Loyalsoldier/geoip/blob/master/LICENSE-GPL)
 
 This product includes GeoLite2 data created by MaxMind, available from [MaxMind](https://www.maxmind.com).
-
-## 项目 Star 数增长趋势
-
-[![Stargazers over time](https://starchart.cc/Loyalsoldier/geoip.svg)](https://starchart.cc/Loyalsoldier/geoip)
