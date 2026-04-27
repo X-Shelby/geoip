@@ -81,16 +81,6 @@
       "action": "add",
       "args": {
         "name": "cn",
-        "mark": "MetaCubeX-V4",
-        "uri": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/cn.list",
-        "onlyIPType": "ipv4"
-      }
-    },
-    {
-      "type": "text",
-      "action": "add",
-      "args": {
-        "name": "cn",
         "mark": "阿里云",
         "uri": "https://metowolf.github.io/iplist/data/isp/aliyun.txt",
         "onlyIPType": "ipv4"
@@ -143,16 +133,6 @@
         "name": "cn",
         "mark": "高一凡V6",
         "uri": "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china6.txt",
-        "onlyIPType": "ipv6"
-      }
-    },
-    {
-      "type": "text",
-      "action": "add",
-      "args": {
-        "name": "cn",
-        "mark": "MetaCubeX-V6",
-        "uri": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/cn.list",
         "onlyIPType": "ipv6"
       }
     },
