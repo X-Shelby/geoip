@@ -323,7 +323,6 @@
         "onlyIPType": "ipv4",
         "wantedList": [
           "cn",
-          "china",
           "private"
        ]
       }
@@ -336,7 +335,6 @@
         "onlyIPType": "ipv6",
          "wantedList": [
           "cn",
-          "china",
           "private"
          ]
       }
@@ -348,7 +346,6 @@
         "outputDir": "./output/text_all",
         "wantedList": [
           "cn",
-          "china",
           "private"
          ]
       }
@@ -360,7 +357,6 @@
         "outputDir": "./output/srs",
         "wantedList": [
           "cn",
-          "china",
           "private"
          ]
       }
@@ -372,7 +368,6 @@
         "outputDir": "./output/mrs",
         "wantedList": [
           "cn",
-          "china",
           "private"
          ]
       }
