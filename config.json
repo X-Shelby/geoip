@@ -21,7 +21,7 @@
       "action": "add",
       "args": {
         "name": "cn",
-        "mark": "苍狼山庄v4",
+        "mark": "IPNetDB-苍狼山庄v4",
         "uri": "https://ispip.clang.cn/all_cn.txt",
         "onlyIPType": "ipv4"
       }
@@ -71,7 +71,7 @@
       "action": "add",
       "args": {
         "name": "cn",
-        "mark": "mayaxcn-V4",
+        "mark": "APNIC-mayaxcn-V4",
         "uri": "https://raw.githubusercontent.com/mayaxcn/china-ip-list/master/chnroute.txt",
         "onlyIPType": "ipv4"
       }
@@ -81,18 +81,8 @@
       "action": "add",
       "args": {
         "name": "cn",
-        "mark": "missuoASN-V4",
+        "mark": "ASN-missuo-V4",
         "uri": "https://raw.githubusercontent.com/missuo/ASN-China/refs/heads/main/IPv4.China.list",
-        "onlyIPType": "ipv4"
-      }
-    },
-    {
-      "type": "text",
-      "action": "add",
-      "args": {
-        "name": "cn",
-        "mark": "blackmatrix7",
-        "uri": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ChinaIPs/ChinaIPs_IP_No_IPv6.txt",
         "onlyIPType": "ipv4"
       }
     },
@@ -151,7 +141,7 @@
       "action": "add",
       "args": {
         "name": "cn",
-        "mark": "苍狼山庄v6",
+        "mark": "IPNetDB-苍狼山庄v6",
         "uri": "https://ispip.clang.cn/all_cn_ipv6.txt",
         "onlyIPType": "ipv6"
       }
@@ -171,7 +161,7 @@
       "action": "add",
       "args": {
         "name": "cn",
-        "mark": "mayaxcn-V6",
+        "mark": "APNIC-mayaxcn-V6",
         "uri": "https://raw.githubusercontent.com/mayaxcn/china-ip-list/refs/heads/master/chnroute_v6.txt",
         "onlyIPType": "ipv6"
       }
@@ -181,12 +171,12 @@
       "action": "add",
       "args": {
         "name": "cn",
-        "mark": "missuoASN-V6",
+        "mark": "ASN-missuo-V6",
         "uri": "https://raw.githubusercontent.com/missuo/ASN-China/refs/heads/main/IPv6.China.list",
         "onlyIPType": "ipv6"
       }
     },
-        {
+    {
       "type": "text",
       "action": "add",
       "args": {
