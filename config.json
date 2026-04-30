@@ -173,7 +173,7 @@
         "name": "cn",
         "mark": "missuoASN-V6",
         "uri": "https://raw.githubusercontent.com/missuo/ASN-China/refs/heads/main/IPv6.China.list",
-        "onlyIPType": "ipv4"
+        "onlyIPType": "ipv6"
       }
     },
     {
