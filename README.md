@@ -11,7 +11,7 @@
  - 中国大陆 IPv4 地址数据融合了 [IPIP.net](https://github.com/17mon/china_ip_list/blob/master/china_ip_list.txt) 和 [@gaoyifan/china-operator-ip](https://github.com/gaoyifan/china-operator-ip/blob/ip-lists/china.txt)
  - 中国大陆 IPv6 地址数据使用 [@gaoyifan/china-operator-ip](https://github.com/gaoyifan/china-operator-ip/blob/ip-lists/china6.txt)
 * **额外整合了以下中国大陆（CN）数据源：**
- [苍狼山庄](https://ispip.clang.cn/)、[纯真IP](https://github.com/metowolf/iplist)、[misakaio](https://github.com/misakaio/chnroutes2)
+ [苍狼山庄](https://ispip.clang.cn/)、[纯真IP](https://github.com/metowolf/iplist)、[misakaio](https://github.com/misakaio/chnroutes2)、[misakaio](https://raw.githubusercontent.com/misakaio/chnroutes2/refs/heads/master/chnroutes.txt)、[APNIC-mayaxcn](https://raw.githubusercontent.com/mayaxcn/china-ip-list/master/chnroute.txt)、[ASN-missuo](https://raw.githubusercontent.com/missuo/ASN-China/refs/heads/main/IPv4.China.list)、[MetaCubeX-V4](https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/cn.list)
 * **逻辑优化**：对所有数据源进行去重和合并（merge），确保生成的 CIDR 格式严谨、无重叠。
 
 ---
