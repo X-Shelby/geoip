@@ -51,7 +51,7 @@
       "action": "add",
       "args": {
         "name": "cn",
-        "mark": "misakaio-V4",
+        "mark": "BGP-misakaio-V4",
         "uri": "https://raw.githubusercontent.com/misakaio/chnroutes2/refs/heads/master/chnroutes.txt",
         "onlyIPType": "ipv4"
       }
