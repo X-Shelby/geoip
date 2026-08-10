@@ -21,16 +21,15 @@
 本项目发布的所有文件均可在 [Latest Release](https://github.com/X-Shelby/geoip/releases/tag/latest) 中找到。
 
 **常用文件固定链接：**
-**常用文件固定链接：**
 * **IPv4 (TXT)**: [cn_v4.txt](https://github.com/X-Shelby/geoip/releases/download/latest/cn_v4.txt)
 * **IPv6 (TXT)**: [cn_v6.txt](https://github.com/X-Shelby/geoip/releases/download/latest/cn_v6.txt)
 * **混合 (TXT)**: [cn.txt](https://github.com/X-Shelby/geoip/releases/download/latest/cn.txt)
 * **sing-box IPv4 (SRS)**: [cn_v4.srs](https://github.com/X-Shelby/geoip/releases/download/latest/cn_v4.srs)
 * **sing-box IPv6 (SRS)**: [cn_v6.srs](https://github.com/X-Shelby/geoip/releases/download/latest/cn_v6.srs)
-* **sing-box 混合 (SRS)**: [cn.srs](https://github.com/X-Shelby/geoip/releases/download/latest/cn.srs)
+* **sing-box 混合 (SRS)**: [cnip_all.srs](https://github.com/X-Shelby/geoip/releases/download/latest/cnip_all.srs)
 * **Mihomo IPv4 (MRS)**: [cn_v4.mrs](https://github.com/X-Shelby/geoip/releases/download/latest/cn_v4.mrs)
 * **Mihomo IPv6 (MRS)**: [cn_v6.mrs](https://github.com/X-Shelby/geoip/releases/download/latest/cn_v6.mrs)
-* **Mihomo 混合 (MRS)**: [cn.mrs](https://github.com/X-Shelby/geoip/releases/download/latest/cn.mrs)
+* **Mihomo 混合 (MRS)**: [cnip_all.mrs](https://github.com/X-Shelby/geoip/releases/download/latest/cnip_all.mrs)
 
 
 > **注意**：如果无法访问 `raw.githubusercontent.com`，可以尝试使用 `cdn.jsdelivr.net` 或 `fastly.jsdelivr.net` 进行加速。
