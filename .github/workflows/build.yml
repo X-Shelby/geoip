@@ -117,9 +117,7 @@ jobs:
           - Mihomo IPv4 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.mrs
           - Mihomo IPv6 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.mrs
           - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.mrs" \
-            ./cn_v4.txt ./cn_v6.txt ./cn.txt \
-            ./cn_v4.srs ./cn_v6.srs ./cn.srs \
-            ./cn_v4.mrs ./cn_v6.mrs ./cn.mrs
+            ./cn_v4.txt ./cn_v6.txt ./cn.txt ./cn_v4.srs ./cn_v6.srs ./cn.srs ./cn_v4.mrs ./cn_v6.mrs ./cn.mrs
 
       - name: Purge jsdelivr CDN
         run: |
