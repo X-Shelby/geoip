@@ -1,5 +1,4 @@
 name: Build geoip files
-
 on:
   workflow_dispatch:
   schedule:
@@ -46,8 +45,8 @@ jobs:
 
       - name: Prepare GeoLite2 databases
         run: |
-          unzip -o ./output/GeoLite2-Country-CSV.zip -d ./
-          unzip -o ./output/GeoLite2-ASN-CSV.zip -d ./
+          unzip ./output/GeoLite2-Country-CSV.zip -d ./
+          unzip ./output/GeoLite2-ASN-CSV.zip -d ./
           mkdir -p geolite2
           cp GeoLite2-Country-CSV_*/*.csv ./geolite2/
           cp GeoLite2-ASN-CSV_*/*.csv ./geolite2/
@@ -60,24 +59,21 @@ jobs:
       - name: Extract targets and clean output
         run: |
           cd output || exit 1
-          # 1. 提取 TXT 文件
+          # 1. 从各自的子目录提取成品文件到根目录
           cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
           cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
           cp text_all/cn.txt ./cn.txt 2>/dev/null || true
-          
-          # 2. 提取 sing-box SRS 文件
           cp srs_v4/cn.srs ./cn_v4.srs 2>/dev/null || true
           cp srs_v6/cn.srs ./cn_v6.srs 2>/dev/null || true
-          cp srs_all/cn.srs ./cn.srs 2>/dev/null || true
-
-          # 3. 提取 Mihomo MRS 文件
+          cp srs/cn.srs ./cn.srs 2>/dev/null || true
           cp mrs_v4/cn.mrs ./cn_v4.mrs 2>/dev/null || true
           cp mrs_v6/cn.mrs ./cn_v6.mrs 2>/dev/null || true
-          cp mrs_all/cn.mrs ./cn.mrs 2>/dev/null || true
-
-          # 4. 彻底清理所有子文件夹
+          cp mrs/cn.mrs ./cn.mrs 2>/dev/null || true
+          
+          # 2. 彻底清理不需要的中间文件夹和临时文件
+          # 这样 release 分支里就只有干净的 5 个文件
           find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
-          # 排除保留的 9 个成品文件，其余删除
+          # 排除我们要保留的文件，其余删除
           find . -maxdepth 1 -type f ! -name 'cn*' -delete
 
       - name: Push to release branch (Fixed Link)
@@ -99,11 +95,14 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          
           git tag -d latest 2>/dev/null || true
           git push origin :refs/tags/latest 2>/dev/null || true
           gh release delete latest --yes 2>/dev/null || true
+          
           git tag latest
           git push origin latest
+          
           # 发布 Release 并包含所有新格式文件
           gh release create latest \
             --title "${{ env.RELEASE_NAME }}" \
@@ -117,11 +116,13 @@ jobs:
           - Mihomo IPv4 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.mrs
           - Mihomo IPv6 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.mrs
           - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.mrs" \
-            ./cn_v4.txt ./cn_v6.txt ./cn.txt ./cn_v4.srs ./cn_v6.srs ./cn.srs ./cn_v4.mrs ./cn_v6.mrs ./cn.mrs
+            ./cn_v4.txt ./cn_v6.txt ./cn.txt \
+            ./cn_v4.srs ./cn_v6.srs ./cn.srs \
+            ./cn_v4.mrs ./cn_v6.mrs ./cn.mrs
 
       - name: Purge jsdelivr CDN
         run: |
-          # 刷新所有 9 个文件的 jsDelivr CDN 缓存
+          # 刷新所有新文件的 CDN 缓存
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v4.txt"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.txt"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.txt"
