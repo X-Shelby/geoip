@@ -26,10 +26,10 @@
 * **混合 (TXT)**: [cn.txt](https://github.com/X-Shelby/geoip/releases/download/latest/cn.txt)
 * **sing-box IPv4 (SRS)**: [cn_v4.srs](https://github.com/X-Shelby/geoip/releases/download/latest/cn_v4.srs)
 * **sing-box IPv6 (SRS)**: [cn_v6.srs](https://github.com/X-Shelby/geoip/releases/download/latest/cn_v6.srs)
-* **sing-box 混合 (SRS)**: [cnip_all.srs](https://github.com/X-Shelby/geoip/releases/download/latest/cnip_all.srs)
+* **sing-box cnip混合新链接 (SRS)**: [cnip_all.srs](https://github.com/X-Shelby/geoip/releases/download/latest/cnip_all.srs)
 * **Mihomo IPv4 (MRS)**: [cn_v4.mrs](https://github.com/X-Shelby/geoip/releases/download/latest/cn_v4.mrs)
 * **Mihomo IPv6 (MRS)**: [cn_v6.mrs](https://github.com/X-Shelby/geoip/releases/download/latest/cn_v6.mrs)
-* **Mihomo 混合 (MRS)**: [cnip_all.mrs](https://github.com/X-Shelby/geoip/releases/download/latest/cnip_all.mrs)
+* **Mihomo cnip混合新链接 (MRS)**: [cnip_all.mrs](https://github.com/X-Shelby/geoip/releases/download/latest/cnip_all.mrs)
 
 
 > **注意**：如果无法访问 `raw.githubusercontent.com`，可以尝试使用 `cdn.jsdelivr.net` 或 `fastly.jsdelivr.net` 进行加速。
