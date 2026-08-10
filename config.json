@@ -354,11 +354,47 @@
       "type": "singboxSRS",
       "action": "output",
       "args": {
+        "outputDir": "./output/srs_v4",
+        "onlyIPType": "ipv4",
+        "wantedList": ["cn", "private"]
+      }
+    },
+    {
+      "type": "singboxSRS",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/srs_v6",
+        "onlyIPType": "ipv6",
+        "wantedList": ["cn", "private"]
+      }
+    },    
+    {
+      "type": "singboxSRS",
+      "action": "output",
+      "args": {
         "outputDir": "./output/srs",
         "wantedList": [
           "cn",
           "private"
          ]
+      }
+    },
+    {
+      "type": "mihomoMRS",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/mrs_v4",
+        "onlyIPType": "ipv4",
+        "wantedList": ["cn", "private"]
+      }
+    },
+    {
+      "type": "mihomoMRS",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/mrs_v6",
+        "onlyIPType": "ipv6",
+        "wantedList": ["cn", "private"]
       }
     },
     {
