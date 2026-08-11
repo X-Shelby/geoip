@@ -40,106 +40,6 @@ jobs:
           LICENSE_KEY: ${{ secrets.MAXMIND_GEOLITE2_LICENSE }}
         run: |
           mkdir -p output
-          # 增加 -f 参数，在 MaxMind 密钥错误或返回 HTTP 异常时及时中断并抛出明确错误
-          curl -fL "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-ASN-CSV.zip
-          curl -fL "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-Country-CSV.zip
-
-      - name: Prepare GeoLite2 databases
-        run: |
-          unzip -o ./output/GeoLite2-Country-CSV.zip -d ./
-          unzip -o ./output/GeoLite2-ASN-CSV.zip -d ./
-          mkdir -p geolite2
-          cp GeoLite2-Country-CSV_*/*.csv ./geolite2/
-          cp GeoLite2-ASN-CSV_*/*.csv ./geolite2/
-
-      - name: Build geoip files
-        run: |
-          go build ./
-          ./geoip convert -c ./config.json
-
-      - name: Extract targets and clean output
-        run: |
-          cd output || exit 1
-          # 1. 从各自目录提取文件
-          cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
-          cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
-          cp text_all/cn.txt ./cn.txt 2>/dev/null || true
-          
-          cp srs_v4/cn.srs ./cn_v4.srs 2>/dev/null || true
-          cp srs_v6/cn.srs ./cn_v6.srs 2>/dev/null || true
-          cp srs/cn.srs ./cn.srs 2>/dev/null || true
-          cp srs/cn.srs ./cnip_all.srs 2>/dev/null || true
-          
-          cp mrs_v4/cn.mrs ./cn_v4.mrs 2>/dev/null || true
-          cp mrs_v6/cn.mrs ./cn_v6.mrs 2>/dev/null || true
-          cp mrs/cn.mrs ./cn.mrs 2>/dev/null || true
-          cp mrs/cn.mrs ./cnip_all.mrs 2>/dev/null || true
-
-          # 2. 彻底清理子文件夹
-          find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
-          find . -maxdepth 1 -type f ! -name 'cn*' -delete
-
-      - name: Push to release branch (Fixed Link)
-        run: |
-          cd output || exit 1
-          git init
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b release
-          git add .
-          git commit -m "Auto-update: ${{ env.RELEASE_NAME }}"
-          git push -f "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" release
-
-      - name: Upload to GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd output || exit 1
-          
-          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" 2>/dev/null || true
-          
-          gh release delete latest --repo ${{ github.repository }} --yes 2>/dev/null || true
-          git push origin :refs/tags/latest 2>/dev/null || true
-          
-          shopt -s nullglob
-          
-          gh release create latest \
-            --repo ${{ github.repository }} \
-            --target release \
-            --title "${{ env.RELEASE_NAME }}" \
-            --notes "固定下载链接：
-          - IPv4 (TXT): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.txt
-          - IPv6 (TXT): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.txt
-          - 合并 (TXT): https://github.com/${{ github.repository }}/releases/download/latest/cn.txt
-          - sing-box IPv4 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.srs
-          - sing-box IPv6 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.srs
-          - sing-box 合并 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.srs
-          - sing-box 别名 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.srs
-          - Mihomo IPv4 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.mrs
-          - Mihomo IPv6 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.mrs
-          - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.mrs
-          - Mihomo 别名 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.mrs" \
-            cn*.txt cn*.srs cn*.mrs
-
-      - name: Purge jsdelivr CDN
-        run: |
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v4.txt"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.txt"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.txt"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v4.srs"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.srs"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.srs"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cnip_all.srs"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v4.mrs"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.mrs"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.mrs"
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cnip_all.mrs"
-
-      - name: Download GeoLite2 databases
-        env:
-          LICENSE_KEY: ${{ secrets.MAXMIND_GEOLITE2_LICENSE }}
-        run: |
-          mkdir -p output
           curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-ASN-CSV.zip
           curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-Country-CSV.zip
 
@@ -214,11 +114,11 @@ jobs:
           - sing-box IPv4 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.srs
           - sing-box IPv6 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.srs
           - sing-box 合并 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.srs
-          - sing-box 合并新链接 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.srs
+          - sing-box 合并 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.srs
           - Mihomo IPv4 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.mrs
           - Mihomo IPv6 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.mrs
           - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.mrs
-          - Mihomo 合并新链接 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.mrs" \
+          - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.mrs" \
             ./cn_v4.txt ./cn_v6.txt ./cn.txt \
             ./cn_v4.srs ./cn_v6.srs ./cn.srs ./cnip_all.srs \
             ./cn_v4.mrs ./cn_v6.mrs ./cn.mrs ./cnip_all.mrs
