@@ -59,22 +59,23 @@ jobs:
       - name: Extract targets and clean output
         run: |
           cd output || exit 1
-          # 1. 从各自的子目录提取成品文件到根目录
+          # 1. 从各自目录提取文件（保持使用 srs/ 和 mrs/ 路径）
           cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
           cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
           cp text_all/cn.txt ./cn.txt 2>/dev/null || true
+          
           cp srs_v4/cn.srs ./cn_v4.srs 2>/dev/null || true
           cp srs_v6/cn.srs ./cn_v6.srs 2>/dev/null || true
           cp srs/cn.srs ./cn.srs 2>/dev/null || true
           cp srs/cn.srs ./cnip_all.srs 2>/dev/null || true
+          
           cp mrs_v4/cn.mrs ./cn_v4.mrs 2>/dev/null || true
           cp mrs_v6/cn.mrs ./cn_v6.mrs 2>/dev/null || true
           cp mrs/cn.mrs ./cn.mrs 2>/dev/null || true
           cp mrs/cn.mrs ./cnip_all.mrs 2>/dev/null || true
-          # 2. 彻底清理不需要的中间文件夹和临时文件
-          # 这样 release 分支里就只有干净的 5 个文件
+
+          # 2. 彻底清理所有子文件夹，仅保留根目录的 cn* 目标文件
           find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
-          # 排除我们要保留的文件，其余删除
           find . -maxdepth 1 -type f ! -name 'cn*' -delete
 
       - name: Push to release branch (Fixed Link)
@@ -84,7 +85,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b release
-          git add cn_v4.txt cn_v6.txt cn.txt cn_v4.srs cn_v6.srs cn.srs cnip_all.srs cn_v4.mrs cn_v6.mrs cn.mrs cnip_all.mrs
+          git add .
           git commit -m "Auto-update: ${{ env.RELEASE_NAME }}"
           git push -f "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" release
 
@@ -93,19 +94,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd output || exit 1
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
           
-          git tag -d latest 2>/dev/null || true
-          git push origin :refs/tags/latest 2>/dev/null || true
           gh release delete latest --yes 2>/dev/null || true
+          git push "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" :refs/tags/latest 2>/dev/null || true
           
-          git tag latest
-          git push origin latest
+          shopt -s nullglob
           
-          # 发布 Release 并包含所有新格式文件
           gh release create latest \
+            --target release \
             --title "${{ env.RELEASE_NAME }}" \
             --notes "固定下载链接：
           - IPv4 (TXT): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.txt
@@ -114,18 +110,15 @@ jobs:
           - sing-box IPv4 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.srs
           - sing-box IPv6 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.srs
           - sing-box 合并 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.srs
-          - sing-box 合并 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.srs
+          - sing-box 别名 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.srs
           - Mihomo IPv4 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.mrs
           - Mihomo IPv6 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.mrs
           - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.mrs
-          - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.mrs" \
-            ./cn_v4.txt ./cn_v6.txt ./cn.txt \
-            ./cn_v4.srs ./cn_v6.srs ./cn.srs ./cnip_all.srs \
-            ./cn_v4.mrs ./cn_v6.mrs ./cn.mrs ./cnip_all.mrs
+          - Mihomo 别名 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.mrs" \
+            cn*.txt cn*.srs cn*.mrs
 
       - name: Purge jsdelivr CDN
         run: |
-          # 刷新所有新文件的 CDN 缓存
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v4.txt"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.txt"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.txt"
