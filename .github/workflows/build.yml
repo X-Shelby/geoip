@@ -1,13 +1,3 @@
-Skip to content
-geoip
-Repository navigation
-Code
-Pull requests
-Agents
-Build geoip files
-Optimize GeoLite2 database preparation steps #182
-Workflow file for this run
-.github/workflows/build.yml at 6474ad0
 name: Build geoip files
 on:
   workflow_dispatch:
