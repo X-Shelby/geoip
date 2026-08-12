@@ -93,19 +93,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd output || exit 1
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
           
-          git tag -d latest 2>/dev/null || true
-          git push origin :refs/tags/latest 2>/dev/null || true
-          gh release delete latest --yes 2>/dev/null || true
+          # 1. 强制清理旧的 Release 和云端的 latest 标签 (使用 --cleanup-tag 自动删除关联 tag)
+          gh release delete latest --repo ${{ github.repository }} --cleanup-tag --yes 2>/dev/null || true
           
-          git tag latest
-          git push origin latest
+          # 缓冲2秒，避免 GitHub API 缓存导致 tag 还没删干净就创建新的
+          sleep 2
           
-          # 发布 Release 并包含所有新格式文件
+          # 2. 直接由 gh 命令创建新 Release 和 标签，明确指定目标分支为 release
           gh release create latest \
+            --repo ${{ github.repository }} \
+            --target release \
             --title "${{ env.RELEASE_NAME }}" \
             --notes "固定下载链接：
           - IPv4 (TXT): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.txt
@@ -114,11 +112,11 @@ jobs:
           - sing-box IPv4 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.srs
           - sing-box IPv6 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.srs
           - sing-box 合并 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.srs
-          - sing-box 合并 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.srs
+          - sing-box 别名 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.srs
           - Mihomo IPv4 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.mrs
           - Mihomo IPv6 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.mrs
           - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.mrs
-          - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.mrs" \
+          - Mihomo 别名 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.mrs" \
             ./cn_v4.txt ./cn_v6.txt ./cn.txt \
             ./cn_v4.srs ./cn_v6.srs ./cn.srs ./cnip_all.srs \
             ./cn_v4.mrs ./cn_v6.mrs ./cn.mrs ./cnip_all.mrs
