@@ -312,16 +312,6 @@
     {
       "type": "private",
       "action": "add"
-    },
-    {
-      "type": "cutter",
-      "action": "merge",
-      "args": {
-        "wantedList": [
-          "cn",
-          "private"
-        ]
-      }
     }
   ],
   "output": [
