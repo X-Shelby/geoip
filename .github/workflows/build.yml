@@ -59,7 +59,7 @@ jobs:
       - name: Extract targets and clean output
         run: |
           cd output || exit 1
-          # 1. 从各自的子目录提取成品文件到根目录
+          # 1. 提取基础文本和编译格式
           cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
           cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
           cp text_all/cn.txt ./cn.txt 2>/dev/null || true
@@ -71,15 +71,40 @@ jobs:
           cp mrs_v6/cn.mrs ./cn_v6.mrs 2>/dev/null || true
           cp mrs/cn.mrs ./cn.mrs 2>/dev/null || true
           cp mrs/cn.mrs ./cnip_all.mrs 2>/dev/null || true
-          # JSON 文件提取
-          cp json_v4/cn.json ./cn_v4.json 2>/dev/null || true
-          cp json_v6/cn.json ./cn_v6.json 2>/dev/null || true
-          cp json_all/cn.json ./cn.json 2>/dev/null || true
-          cp json_all/cn.json ./cnip_all.json 2>/dev/null || true
-          
-          # 2. 彻底清理不需要的中间文件夹和临时文件
+
+          # 2. 使用 Python 脚本自动将 TXT 转换生成 sing-box 标准 JSON 规则集
+          python3 -c '
+          import json, os
+
+          def convert_txt_to_json(txt_path, json_path):
+              if not os.path.exists(txt_path):
+                  return
+              ip_rules = []
+              with open(txt_path, "r") as f:
+                  for line in f:
+                      line = line.strip()
+                      if line and not line.startswith("#"):
+                          ip_rules.append(line)
+              
+              rule_set = {
+                  "version": 3,
+                  "rules": [
+                      {
+                          "ip_cidr": ip_rules
+                      }
+                  ]
+              }
+              with open(json_path, "w") as f:
+                  json.dump(rule_set, f, indent=2)
+
+          convert_txt_to_json("cn_v4.txt", "cn_v4.json")
+          convert_txt_to_json("cn_v6.txt", "cn_v6.json")
+          convert_txt_to_json("cn.txt", "cn.json")
+          convert_txt_to_json("cn.txt", "cnip_all.json")
+          '
+
+          # 3. 清理不需要的中间文件夹
           find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
-          # 排除我们要保留的文件，其余删除
           find . -maxdepth 1 -type f ! -name 'cn*' -delete
 
       - name: Push to release branch (Fixed Link)
@@ -98,12 +123,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd output || exit 1
-          
-          # 清理旧的 Release 和云端的 latest 标签
           gh release delete latest --repo ${{ github.repository }} --cleanup-tag --yes 2>/dev/null || true
           sleep 2
-          
-          # 创建新 Release，附加所有格式（TXT, SRS, MRS, JSON）
           gh release create latest \
             --repo ${{ github.repository }} \
             --target release \
@@ -116,13 +137,13 @@ jobs:
           - sing-box IPv6 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.srs
           - sing-box 合并 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.srs
           - sing-box 别名 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.srs
-          - sing-box IPv4 源规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.json
-          - sing-box IPv6 源规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.json
-          - sing-box 合并 源规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cn.json
-          - sing-box 别名 源规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.json
+          - sing-box IPv4 规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.json
+          - sing-box IPv6 规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.json
+          - sing-box 合并 规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cn.json
+          - sing-box 别名 规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.json
           - Mihomo IPv4 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.mrs
           - Mihomo IPv6 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.mrs
-          - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.mrs
+          - Mihomo 合并 (MRS): https://github.com/${{ github.repository}}/.github/releases/download/latest/cn.mrs
           - Mihomo 别名 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.mrs" \
             ./cn_v4.txt ./cn_v6.txt ./cn.txt \
             ./cn_v4.srs ./cn_v6.srs ./cn.srs ./cnip_all.srs \
@@ -131,7 +152,6 @@ jobs:
 
       - name: Purge jsdelivr CDN
         run: |
-          # 刷新 CDN 缓存
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v4.txt"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.txt"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.txt"
