@@ -421,41 +421,4 @@
           "private"
         ]
       }
-    },
-    {
-      "type": "singboxJSON",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/json_v4",
-        "onlyIPType": "ipv4",
-        "wantedList": [
-          "cn",
-          "private"
-        ]
-      }
-    },
-    {
-      "type": "singboxJSON",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/json_v6",
-        "onlyIPType": "ipv6",
-        "wantedList": [
-          "cn",
-          "private"
-        ]
-      }
-    },
-    {
-      "type": "singboxJSON",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/json_all",
-        "wantedList": [
-          "cn",
-          "private"
-        ]
-      }
     }
-  ]
-}
