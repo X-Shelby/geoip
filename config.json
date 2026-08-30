@@ -423,7 +423,7 @@
       }
     },
     {
-      "type": "json",
+      "type": "singboxJSON",
       "action": "output",
       "args": {
         "outputDir": "./output/json_v4",
@@ -435,7 +435,7 @@
       }
     },
     {
-      "type": "json",
+      "type": "singboxJSON",
       "action": "output",
       "args": {
         "outputDir": "./output/json_v6",
@@ -447,7 +447,7 @@
       }
     },
     {
-      "type": "json",
+      "type": "singboxJSON",
       "action": "output",
       "args": {
         "outputDir": "./output/json_all",
