@@ -71,8 +71,13 @@ jobs:
           cp mrs_v6/cn.mrs ./cn_v6.mrs 2>/dev/null || true
           cp mrs/cn.mrs ./cn.mrs 2>/dev/null || true
           cp mrs/cn.mrs ./cnip_all.mrs 2>/dev/null || true
+          # JSON 文件提取
+          cp json_v4/cn.json ./cn_v4.json 2>/dev/null || true
+          cp json_v6/cn.json ./cn_v6.json 2>/dev/null || true
+          cp json_all/cn.json ./cn.json 2>/dev/null || true
+          cp json_all/cn.json ./cnip_all.json 2>/dev/null || true
+          
           # 2. 彻底清理不需要的中间文件夹和临时文件
-          # 这样 release 分支里就只有干净的 5 个文件
           find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
           # 排除我们要保留的文件，其余删除
           find . -maxdepth 1 -type f ! -name 'cn*' -delete
@@ -84,7 +89,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b release
-          git add cn_v4.txt cn_v6.txt cn.txt cn_v4.srs cn_v6.srs cn.srs cnip_all.srs cn_v4.mrs cn_v6.mrs cn.mrs cnip_all.mrs
+          git add cn_v4.txt cn_v6.txt cn.txt cn_v4.srs cn_v6.srs cn.srs cnip_all.srs cn_v4.mrs cn_v6.mrs cn.mrs cnip_all.mrs cn_v4.json cn_v6.json cn.json cnip_all.json
           git commit -m "Auto-update: ${{ env.RELEASE_NAME }}"
           git push -f "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" release
 
@@ -94,13 +99,11 @@ jobs:
         run: |
           cd output || exit 1
           
-          # 1. 强制清理旧的 Release 和云端的 latest 标签 (使用 --cleanup-tag 自动删除关联 tag)
+          # 清理旧的 Release 和云端的 latest 标签
           gh release delete latest --repo ${{ github.repository }} --cleanup-tag --yes 2>/dev/null || true
-          
-          # 缓冲2秒，避免 GitHub API 缓存导致 tag 还没删干净就创建新的
           sleep 2
           
-          # 2. 直接由 gh 命令创建新 Release 和 标签，明确指定目标分支为 release
+          # 创建新 Release，附加所有格式（TXT, SRS, MRS, JSON）
           gh release create latest \
             --repo ${{ github.repository }} \
             --target release \
@@ -113,17 +116,22 @@ jobs:
           - sing-box IPv6 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.srs
           - sing-box 合并 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.srs
           - sing-box 别名 (SRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.srs
+          - sing-box IPv4 源规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.json
+          - sing-box IPv6 源规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.json
+          - sing-box 合并 源规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cn.json
+          - sing-box 别名 源规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.json
           - Mihomo IPv4 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.mrs
           - Mihomo IPv6 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.mrs
           - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.mrs
           - Mihomo 别名 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.mrs" \
             ./cn_v4.txt ./cn_v6.txt ./cn.txt \
             ./cn_v4.srs ./cn_v6.srs ./cn.srs ./cnip_all.srs \
-            ./cn_v4.mrs ./cn_v6.mrs ./cn.mrs ./cnip_all.mrs
+            ./cn_v4.mrs ./cn_v6.mrs ./cn.mrs ./cnip_all.mrs \
+            ./cn_v4.json ./cn_v6.json ./cn.json ./cnip_all.json
 
       - name: Purge jsdelivr CDN
         run: |
-          # 刷新所有新文件的 CDN 缓存
+          # 刷新 CDN 缓存
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v4.txt"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.txt"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.txt"
@@ -135,3 +143,7 @@ jobs:
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.mrs"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.mrs"
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cnip_all.mrs"
+          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v4.json"
+          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn_v6.json"
+          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cn.json"
+          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/cnip_all.json"
