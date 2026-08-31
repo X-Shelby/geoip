@@ -29,6 +29,14 @@ jobs:
         with:
           go-version-file: ./go.mod
 
+      - name: Set up Swap Space (Prevent OOM)
+        run: |
+          sudo fallocate -l 6G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h 
+
       - name: Set variables
         run: |
           echo "TAG_NAME=latest" >> $GITHUB_ENV
@@ -42,8 +50,9 @@ jobs:
           LICENSE_KEY: ${{ secrets.MAXMIND_GEOLITE2_LICENSE }}
         run: |
           mkdir -p output
-          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-ASN-CSV.zip
-          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-Country-CSV.zip
+          # 使用 -f 参数，如果遇到 MaxMind 429 限制或 401 无权限，直接报错中止，防止生成坏档
+          curl -f -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-ASN-CSV.zip
+          curl -f -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-Country-CSV.zip
 
       - name: Prepare GeoLite2 databases
         run: |
@@ -52,15 +61,6 @@ jobs:
           mkdir -p geolite2
           cp GeoLite2-Country-CSV_*/*.csv ./geolite2/
           cp GeoLite2-ASN-CSV_*/*.csv ./geolite2/
-
-      - name: Set up Swap Space (Prevent OOM)
-        run: |
-          sudo fallocate -l 12G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
-          # 打印当前内存和 Swap 状态，确认是否挂载成功
-          free -h 
 
       - name: Build geoip files
         run: |
@@ -103,7 +103,6 @@ jobs:
           # 2. 正常编译执行
           go build ./
           ./geoip convert -c ./config.json
-
 
       - name: Extract targets and clean output
         run: |
