@@ -33,6 +33,8 @@ jobs:
         run: |
           echo "TAG_NAME=latest" >> $GITHUB_ENV
           echo "RELEASE_NAME=Latest Update ($(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M'))" >> $GITHUB_ENV
+          echo "update_version=$(date -d '+8 hours' +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "cn_asn=https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/ChinaASN/ChinaASN.list" >> $GITHUB_ENV
         shell: bash
 
       - name: Download GeoLite2 databases
@@ -53,13 +55,50 @@ jobs:
 
       - name: Build geoip files
         run: |
+          # 1. 读取环境变量中的 cn_asn 链接，自动清洗并注入到 config.json
+          python3 -c '
+          import json, urllib.request, os
+
+          asn_url = os.environ.get("cn_asn")
+          if asn_url:
+              try:
+                  req = urllib.request.urlopen(asn_url)
+                  asns = []
+                  for line in req.read().decode("utf-8").splitlines():
+                      line = line.strip()
+                      # 精准提取 IP-ASN 格式的编号
+                      if line.startswith("IP-ASN,"):
+                          asn_num = line.split(",")[1]
+                          asns.append(f"AS{asn_num}")
+                  
+                  with open("config.json", "r") as f:
+                      config = json.load(f)
+
+                  # 找到 MaxMind 模块并将抓取的 ASN 注入 cn 分类
+                  for item in config.get("input", []):
+                      if item.get("type") == "maxmindGeoLite2ASNCSV":
+                          if "cn" not in item["args"]["wantedList"]:
+                              item["args"]["wantedList"]["cn"] = []
+                          existing = set(item["args"]["wantedList"]["cn"])
+                          for a in asns:
+                              existing.add(a)
+                          item["args"]["wantedList"]["cn"] = sorted(list(existing))
+
+                  with open("config.json", "w") as f:
+                      json.dump(config, f, indent=2)
+                  print(f"成功从远程链接自动注入 {len(asns)} 个 ASN 编号。")
+              except Exception as e:
+                  print(f"获取或解析 ASN 列表失败: {e}")
+          '
+
+          # 2. 正常编译执行
           go build ./
           ./geoip convert -c ./config.json
 
       - name: Extract targets and clean output
         run: |
           cd output || exit 1
-          # 1. 提取基础文本和编译格式
+          # 提取基础文本和编译格式
           cp text_v4/cn.txt ./cn_v4.txt 2>/dev/null || true
           cp text_v6/cn.txt ./cn_v6.txt 2>/dev/null || true
           cp text_all/cn.txt ./cn.txt 2>/dev/null || true
@@ -72,7 +111,7 @@ jobs:
           cp mrs/cn.mrs ./cn.mrs 2>/dev/null || true
           cp mrs/cn.mrs ./cnip_all.mrs 2>/dev/null || true
 
-          # 2. 使用 Python 脚本自动将 TXT 转换生成 sing-box 标准 JSON 规则集
+          # 使用 Python 脚本自动将 TXT 转换生成 sing-box 标准 JSON 规则集
           python3 -c '
           import json, os
 
@@ -103,7 +142,7 @@ jobs:
           convert_txt_to_json("cn.txt", "cnip_all.json")
           '
 
-          # 3. 清理不需要的中间文件夹
+          # 清理不需要的中间文件夹
           find . -maxdepth 1 -type d ! -path . -exec rm -rf {} +
           find . -maxdepth 1 -type f ! -name 'cn*' -delete
 
