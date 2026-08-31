@@ -29,14 +29,6 @@ jobs:
         with:
           go-version-file: ./go.mod
 
-      - name: Set up Swap Space (Prevent OOM)
-        run: |
-          sudo fallocate -l 6G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
-          free -h 
-
       - name: Set variables
         run: |
           echo "TAG_NAME=latest" >> $GITHUB_ENV
@@ -50,9 +42,8 @@ jobs:
           LICENSE_KEY: ${{ secrets.MAXMIND_GEOLITE2_LICENSE }}
         run: |
           mkdir -p output
-          # 使用 -f 参数，如果遇到 MaxMind 429 限制或 401 无权限，直接报错中止，防止生成坏档
-          curl -f -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-ASN-CSV.zip
-          curl -f -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-Country-CSV.zip
+          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-ASN-CSV.zip
+          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o ./output/GeoLite2-Country-CSV.zip
 
       - name: Prepare GeoLite2 databases
         run: |
@@ -103,6 +94,7 @@ jobs:
           # 2. 正常编译执行
           go build ./
           ./geoip convert -c ./config.json
+
 
       - name: Extract targets and clean output
         run: |
@@ -191,7 +183,7 @@ jobs:
           - sing-box 别名 规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.json
           - Mihomo IPv4 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.mrs
           - Mihomo IPv6 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.mrs
-          - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.mrs
+          - Mihomo 合并 (MRS): https://github.com/${{ github.repository}}/.github/releases/download/latest/cn.mrs
           - Mihomo 别名 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.mrs" \
             ./cn_v4.txt ./cn_v6.txt ./cn.txt \
             ./cn_v4.srs ./cn_v6.srs ./cn.srs ./cnip_all.srs \
