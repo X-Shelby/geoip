@@ -354,6 +354,15 @@
           ]
         }
       }
+    },
+    {
+      "type": "text",
+      "action": "remove",
+      "args": {
+        "name": "cn",
+        "mark": "MetaCubeX-Google-Remove",
+        "uri": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/google.list"
+      }
     }
   ],
   "output": [
