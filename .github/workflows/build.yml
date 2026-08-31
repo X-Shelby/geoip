@@ -76,8 +76,8 @@ jobs:
 
                   # 找到 MaxMind 模块并将抓取的 ASN 注入 cn 分类
                   for item in config.get("input", []):
-                      if item.get("type") == "maxmindGeoLite2ASNCSV":
-                          if "cn" not in item["args"]["wantedList"]:
+                      if item.get("type") == "maxmindGeoLite2ASNCSV" and item.get("action") == "add":
+                         if "cn" not in item["args"]["wantedList"]:
                               item["args"]["wantedList"]["cn"] = []
                           existing = set(item["args"]["wantedList"]["cn"])
                           for a in asns:
