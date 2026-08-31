@@ -53,6 +53,15 @@ jobs:
           cp GeoLite2-Country-CSV_*/*.csv ./geolite2/
           cp GeoLite2-ASN-CSV_*/*.csv ./geolite2/
 
+      - name: Set up Swap Space (Prevent OOM)
+        run: |
+          sudo fallocate -l 12G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          # 打印当前内存和 Swap 状态，确认是否挂载成功
+          free -h 
+
       - name: Build geoip files
         run: |
           # 1. 读取环境变量中的 cn_asn 链接，自动清洗并注入到 config.json
@@ -183,7 +192,7 @@ jobs:
           - sing-box 别名 规则 (JSON): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.json
           - Mihomo IPv4 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v4.mrs
           - Mihomo IPv6 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn_v6.mrs
-          - Mihomo 合并 (MRS): https://github.com/${{ github.repository}}/.github/releases/download/latest/cn.mrs
+          - Mihomo 合并 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cn.mrs
           - Mihomo 别名 (MRS): https://github.com/${{ github.repository }}/releases/download/latest/cnip_all.mrs" \
             ./cn_v4.txt ./cn_v6.txt ./cn.txt \
             ./cn_v4.srs ./cn_v6.srs ./cn.srs ./cnip_all.srs \
