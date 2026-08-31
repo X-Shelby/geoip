@@ -312,103 +312,8 @@
     {
       "type": "private",
       "action": "add"
-    }
-  ],
-  "output": [
-    {
-      "type": "text",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/text_v4",
-        "onlyIPType": "ipv4",
-        "wantedList": [
-          "cn",
-          "private"
-       ]
-      }
     },
     {
-      "type": "text",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/text_v6",
-        "onlyIPType": "ipv6",
-         "wantedList": [
-          "cn",
-          "private"
-         ]
-      }
-    },
-    {
-      "type": "text",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/text_all",
-        "wantedList": [
-          "cn",
-          "private"
-         ]
-      }
-    },
-    {
-      "type": "singboxSRS",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/srs_v4",
-        "onlyIPType": "ipv4",
-        "wantedList": ["cn", "private"]
-      }
-    },
-    {
-      "type": "singboxSRS",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/srs_v6",
-        "onlyIPType": "ipv6",
-        "wantedList": ["cn", "private"]
-      }
-    },    
-    {
-      "type": "singboxSRS",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/srs",
-        "wantedList": [
-          "cn",
-          "private"
-         ]
-      }
-    },
-    {
-      "type": "mihomoMRS",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/mrs_v4",
-        "onlyIPType": "ipv4",
-        "wantedList": ["cn", "private"]
-      }
-    },
-    {
-      "type": "mihomoMRS",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/mrs_v6",
-        "onlyIPType": "ipv6",
-        "wantedList": ["cn", "private"]
-      }
-    },
-    {
-      "type": "mihomoMRS",
-      "action": "output",
-      "args": {
-        "outputDir": "./output/mrs",
-        "wantedList": [
-          "cn",
-          "private"
-         ]
-      }
-    },
-        {
       "type": "json",
       "action": "remove",
       "args": {
@@ -448,6 +353,101 @@
             "AS15169", "AS13949", "AS139190", "AS139070"
           ]
         }
+      }
+    }
+  ],
+  "output": [
+    {
+      "type": "text",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/text_v4",
+        "onlyIPType": "ipv4",
+        "wantedList": [
+          "cn",
+          "private"
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/text_v6",
+        "onlyIPType": "ipv6",
+        "wantedList": [
+          "cn",
+          "private"
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/text_all",
+        "wantedList": [
+          "cn",
+          "private"
+        ]
+      }
+    },
+    {
+      "type": "singboxSRS",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/srs_v4",
+        "onlyIPType": "ipv4",
+        "wantedList": ["cn", "private"]
+      }
+    },
+    {
+      "type": "singboxSRS",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/srs_v6",
+        "onlyIPType": "ipv6",
+        "wantedList": ["cn", "private"]
+      }
+    },
+    {
+      "type": "singboxSRS",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/srs",
+        "wantedList": [
+          "cn",
+          "private"
+        ]
+      }
+    },
+    {
+      "type": "mihomoMRS",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/mrs_v4",
+        "onlyIPType": "ipv4",
+        "wantedList": ["cn", "private"]
+      }
+    },
+    {
+      "type": "mihomoMRS",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/mrs_v6",
+        "onlyIPType": "ipv6",
+        "wantedList": ["cn", "private"]
+      }
+    },
+    {
+      "type": "mihomoMRS",
+      "action": "output",
+      "args": {
+        "outputDir": "./output/mrs",
+        "wantedList": [
+          "cn",
+          "private"
+        ]
       }
     }
   ]
