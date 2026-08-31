@@ -77,7 +77,7 @@ jobs:
                   # 找到 MaxMind 模块并将抓取的 ASN 注入 cn 分类
                   for item in config.get("input", []):
                       if item.get("type") == "maxmindGeoLite2ASNCSV" and item.get("action") == "add":
-                         if "cn" not in item["args"]["wantedList"]:
+                          if "cn" not in item["args"]["wantedList"]:
                               item["args"]["wantedList"]["cn"] = []
                           existing = set(item["args"]["wantedList"]["cn"])
                           for a in asns:
@@ -94,6 +94,7 @@ jobs:
           # 2. 正常编译执行
           go build ./
           ./geoip convert -c ./config.json
+
 
       - name: Extract targets and clean output
         run: |
